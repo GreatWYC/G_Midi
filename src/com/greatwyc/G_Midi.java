@@ -1,5 +1,4 @@
 
-
 /***G_Midi
 * @author GreatWYC
 * @version 2.0
@@ -25,7 +24,6 @@ public class G_Midi
 		//文件读取
 		for(int i=0;fs.available()>0;i++){
 			data[i] = fs.read();
-			//System.out.println(data[i]);
 		}
 		fs.close();
 		
@@ -210,7 +208,6 @@ public class G_Midi
 			result.add(m);
 			continue;
 		}
-		//System.out.println("处理完毕");
 		return result;
 	}
 	
@@ -248,33 +245,6 @@ public class G_Midi
 			result[i] = arr[index0+i];
 		}
 		return result;
-	}
-	
-	//消息转mcfunction方法
-	public static void messageToCommand(String name,List<List> gm,double speed,String instrument) throws Exception{
-		String cmd = "scoreboard objectives add GMidiPlayer dummy GMidiPlayer\nscoreboard players add @a GMidiPlayer 1\nexecute @a[scores={GMidiPlayer=1}] ~~~ title @a subtitle §5正在播放: "+name+"\nexecute @a[scores={GMidiPlayer=1}] ~~~ title @a title §5\n";
-		double max_time = 0.0;
-		for(List<HashMap> l:gm){
-			//System.out.println(l);
-			double delta_time = 1.0/*+(int) l.get(0).get("delta_time") / speed*20.0*/;
-			for(int i = 0;i < l.size();i++){
-				delta_time += ((int) l.get(i).get("delta_time") / speed * 20.0);
-				if(i+1<l.size()&&(l.get(i).get("event").equals("note_on")||l.get(i).get("event").equals("note_aftertouch")||l.get(i).get("event").equals("channel_aftertouch"))){
-					cmd+="execute @a[scores={GMidiPlayer="+ (int) delta_time + "}] ~~~ playsound note."+instrument+" @a ~~~ 1 "+noteToFloat((int) l.get(i).get("note"))+" 1\n";
-				}
-			}
-			if(delta_time>=max_time)max_time = delta_time;
-		}
-		cmd+="execute @a[scores={GMidiPlayer="+((int) max_time+40)+"..}] ~~~ scoreboard players reset @a GMidiPlayer\n";
-		FileOutputStream fos = new FileOutputStream(new File("/storage/emulated/0/MTF/"+name+".mcfunction"));
-		fos.write(cmd.getBytes());
-		fos.close();
-		//System.out.println("finish.");
-	}
-
-	//mc命令格式音高转换方法
-	private static double noteToFloat(int num){
-		return Math.round(Math.pow(2,(num-66.0)/12.0)*1000000.0)/1000000.0;
 	}
 	
 }

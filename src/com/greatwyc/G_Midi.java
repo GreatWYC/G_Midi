@@ -18,7 +18,7 @@ public class G_Midi
 		int[] MThd = new int[6];
 		InputStream fs = new FileInputStream(f);
 		int size = fs.available();
-		int data[] = new int[size];
+		int[] data = new int[size];
 		int index = 0;
 		
 		//文件读取
@@ -65,11 +65,11 @@ public class G_Midi
 				String lastEvent = (String) result.get(result.size()-1).get("event");
 				m.put("event",lastEvent);
 				m.put("channel",result.get(result.size()-2).get("channel"));
-				if(lastEvent.equals("note_on")||lastEvent.equals("note_off")||lastEvent.equals("note_aftertouch")){
+				if(lastEvent.equals("note_on")||lastEvent.equals("note_off")||lastEvent.equals("polyphonic_aftertouch")){
 					m.put("note",MTrk_block[index]);
 					m.put("velocity",MTrk_block[index+1]);
 					index+=2;
-				}else if(lastEvent.equals("controller")){
+				}else if(lastEvent.equals("control_mode_change")){
 					m.put("number",MTrk_block[index]);
 					m.put("value",MTrk_block[index+1]);
 					index+=2;
@@ -87,13 +87,13 @@ public class G_Midi
 				m.put("velocity",MTrk_block[index+2]);
 				index+=3;
 			}else if(MTrk_block[index]%160<16 && (int) (MTrk_block[index]/160)==1){
-				m.put("event","note_aftertouch");
+				m.put("event","polyphonic_aftertouch");
 				m.put("channel",MTrk_block[index]%160);
 				m.put("note",MTrk_block[index+1]);
 				m.put("velocity",MTrk_block[index+2]);
 				index+=3;
 			}else if(MTrk_block[index]%176<16 && (int) (MTrk_block[index]/176)==1){
-				m.put("event","controller");
+				m.put("event","control_mode_change");
 				m.put("channel",MTrk_block[index]%176);
 				m.put("number",MTrk_block[index+1]);
 				m.put("value",MTrk_block[index+2]);
@@ -109,7 +109,7 @@ public class G_Midi
 				m.put("amount",MTrk_block[index+1]);
 				index+=2;
 			}else if(MTrk_block[index]%224<16 && (int) (MTrk_block[index]/224)==1){
-				m.put("event","pitch_bend");
+				m.put("event","pitch_wheel_control");
 				m.put("channel",MTrk_block[index]%224);
 				m.put("LSB",MTrk_block[index+1]);
 				m.put("MSB",MTrk_block[index+2]);

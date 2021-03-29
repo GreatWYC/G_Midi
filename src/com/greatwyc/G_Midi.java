@@ -1,7 +1,7 @@
 
 /***G_Midi
 * @author GreatWYC
-* @version 2.0
+* @version 3.0.0
 */
 
 package com.greatwyc;
@@ -12,7 +12,10 @@ import java.lang.Number;
 
 public class G_Midi
 {
-	public static List<List> parseMidi(File f) throws Exception{
+	private List<List> messageList;
+	private static double speed;
+	
+	public G_Midi(File f) throws Exception{
 		List<List> result = new ArrayList<List>();
 		List<int[]> MTrk = new ArrayList<int[]>();
 		int[] MThd = new int[6];
@@ -47,7 +50,7 @@ public class G_Midi
 			result.add(spliter(MTrk.get(i)));
 		}
 		
-		return result;
+		this.messageList = result;
 	}
 	
 	
@@ -171,7 +174,8 @@ public class G_Midi
 					index+=2;
 				}else if(MTrk_block[index+1]==81){
 					m.put("type","tempo");
-					m.put("time",60000000/(MTrk_block[index+3]*Math.pow(16,4)+MTrk_block[index+4]*Math.pow(16,2)+MTrk_block[index+5]));
+					speed = 60000000/(MTrk_block[index+3]*Math.pow(16,4)+MTrk_block[index+4]*Math.pow(16,2)+MTrk_block[index+5]);
+					m.put("time",speed);
 					index+=MTrk_block[index+2]+3;
 				}else if(MTrk_block[index+1]==84){
 					m.put("type","SMPTE_offset");
@@ -247,4 +251,12 @@ public class G_Midi
 		return result;
 	}
 	
+	
+	public List<List> getMessageList(){
+		return this.messageList;
+	}
+	
+	public double getSpeed(){
+		return this.speed;
+	}
 }

@@ -31,7 +31,7 @@
 - greatwyc
 
 ### TODO
-- Next step
+- Next step:v3.1.0 将添加midi写入功能
 
 ### Contact
 - Email greatwyc@outlook.com
